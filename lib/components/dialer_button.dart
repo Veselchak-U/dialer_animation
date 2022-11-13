@@ -13,7 +13,7 @@ class DialerButton extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      padding: const EdgeInsets.all(8),
+      padding: EdgeInsets.all(size / 6),
       child: Container(
         alignment: Alignment.center,
         decoration: const BoxDecoration(
