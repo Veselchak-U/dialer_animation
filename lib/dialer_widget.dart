@@ -15,20 +15,22 @@ class DialerWidget extends StatefulWidget {
 }
 
 class _DialerWidgetState extends State<DialerWidget> {
-  static const _buttonSize = 80.0;
+  static const buttonSize = 80.0;
+  static const stepAngle = pi / 7;
+  static const startAngle = pi / 2 - stepAngle;
 
   static const List<Widget> _buttons = [
-    DialerButton(1, _buttonSize),
-    DialerButton(2, _buttonSize),
-    DialerButton(3, _buttonSize),
-    DialerButton(4, _buttonSize),
-    DialerButton(5, _buttonSize),
-    DialerButton(6, _buttonSize),
-    DialerButton(7, _buttonSize),
-    DialerButton(8, _buttonSize),
-    DialerButton(9, _buttonSize),
-    DialerButton(0, _buttonSize),
-    DialerStopper(_buttonSize),
+    DialerButton(1, buttonSize),
+    DialerButton(2, buttonSize),
+    DialerButton(3, buttonSize),
+    DialerButton(4, buttonSize),
+    DialerButton(5, buttonSize),
+    DialerButton(6, buttonSize),
+    DialerButton(7, buttonSize),
+    DialerButton(8, buttonSize),
+    DialerButton(9, buttonSize),
+    DialerButton(0, buttonSize),
+    DialerStopper(buttonSize),
   ];
 
   final List<Alignment> _circleAlignments = [];
@@ -44,7 +46,9 @@ class _DialerWidgetState extends State<DialerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final innerSize = widget.size - _buttonSize * 2;
+    const gap = 4.0;
+    const holePadding = 16.0;
+    final innerSize = widget.size - buttonSize * 2;
 
     return SizedBox(
       width: widget.size,
@@ -55,9 +59,16 @@ class _DialerWidgetState extends State<DialerWidget> {
           const _OuterCircle(),
           _InnerCircle(innerSize),
           ..._buttonsWithAlignment,
-          DialerHorseshoe(
-            outerSize: widget.size,
-            innerSize: innerSize,
+          Padding(
+            padding: const EdgeInsets.all(gap),
+            child: DialerHorseshoe(
+              outerRadius: widget.size / 2 - gap,
+              innerRadius: innerSize / 2 + gap,
+              holeRadius: buttonSize / 2 - holePadding,
+              startAngle: startAngle,
+              stepAngle: stepAngle,
+              endAngle: startAngle + stepAngle * 9,
+            ),
           ),
         ],
       ),
@@ -66,14 +77,12 @@ class _DialerWidgetState extends State<DialerWidget> {
 
   void _fillCircleAlignments() {
     const double radius = 1;
-    const double step = pi / 7;
-    const double start = (pi / 2) - step;
-    double angle = start;
+    double angle = startAngle;
     for (var i = 0; i < _buttons.length; i++) {
       final x = radius * cos(angle);
       final y = radius * sin(angle);
       _circleAlignments.add(Alignment(x, y * -1));
-      angle += step;
+      angle += stepAngle;
     }
   }
 
