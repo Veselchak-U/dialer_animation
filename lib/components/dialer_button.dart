@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class DialerButton extends StatelessWidget {
   final int number;
   final double size;
+  final void Function()? onTap;
   final void Function(DragStartDetails)? onPanStart;
   final void Function(DragUpdateDetails)? onPanUpdate;
   final void Function(DragEndDetails)? onPanEnd;
@@ -11,6 +12,7 @@ class DialerButton extends StatelessWidget {
     this.number,
     this.size, {
     Key? key,
+    this.onTap,
     this.onPanStart,
     this.onPanUpdate,
     this.onPanEnd,
@@ -19,6 +21,7 @@ class DialerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: onTap,
       onPanStart: onPanStart,
       onPanUpdate: onPanUpdate,
       onPanEnd: onPanEnd,

@@ -19,27 +19,18 @@ class _DialerWidgetState extends State<DialerWidget> {
   static const stepAngle = pi / 7;
   static const startAngle = pi / 2 - stepAngle;
 
-  static const List<Widget> _buttons = [
-    DialerButton(1, buttonSize),
-    DialerButton(2, buttonSize),
-    DialerButton(3, buttonSize),
-    DialerButton(4, buttonSize),
-    DialerButton(5, buttonSize),
-    DialerButton(6, buttonSize),
-    DialerButton(7, buttonSize),
-    DialerButton(8, buttonSize),
-    DialerButton(9, buttonSize),
-    DialerButton(0, buttonSize),
-    DialerStopper(buttonSize),
-  ];
+  late final List<Widget> _buttons;
 
   final List<Alignment> _circleAlignments = [];
 
   List<Widget> _buttonsWithAlignment = [];
 
+  double turns = 0.0;
+
   @override
   void initState() {
     super.initState();
+    _initButtons();
     _fillCircleAlignments();
     _fillButtonsWithAlignment();
   }
@@ -59,20 +50,128 @@ class _DialerWidgetState extends State<DialerWidget> {
           const _OuterCircle(),
           _InnerCircle(innerSize),
           ..._buttonsWithAlignment,
-          Padding(
-            padding: const EdgeInsets.all(gap),
-            child: DialerHorseshoe(
-              outerRadius: widget.size / 2 - gap,
-              innerRadius: innerSize / 2 + gap,
-              holeRadius: buttonSize / 2 - holePadding,
-              startAngle: startAngle,
-              stepAngle: stepAngle,
-              endAngle: startAngle + stepAngle * 9,
+          IgnorePointer(
+            child: Padding(
+              padding: const EdgeInsets.all(gap),
+              child: AnimatedRotation(
+                duration: const Duration(milliseconds: 500),
+                turns: turns,
+                child: DialerHorseshoe(
+                  outerRadius: widget.size / 2 - gap,
+                  innerRadius: innerSize / 2 + gap,
+                  holeRadius: buttonSize / 2 - holePadding,
+                  startAngle: startAngle,
+                  stepAngle: stepAngle,
+                  endAngle: startAngle + stepAngle * 9,
+                ),
+              ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _setTurns(double value) {
+    setState(() {
+      turns = value;
+    });
+  }
+
+  void _onPanStart(int index) {
+    print('!!! _onPanStart($index)');
+  }
+
+  void _onPanUpdate(int index, DragUpdateDetails info) {
+    print('!!! _onPanUpdate($index): ${info.delta.dx} ${info.delta.dy}');
+    final deltaTurns = _calcDeltaTurns(info.delta);
+    _setTurns(turns + deltaTurns);
+  }
+
+  void _onPanEnd(int index) {
+    print('!!! _onPanEnd($index)');
+    _setTurns(0);
+  }
+
+  double _calcDeltaTurns(Offset delta) {
+    final mult = 2 * pi / widget.size;
+    return -delta.dy * mult;
+  }
+
+  void _initButtons() {
+    _buttons = [
+      DialerButton(
+        1,
+        buttonSize,
+        onPanStart: (_) => _onPanStart(1),
+        onPanUpdate: (info) => _onPanUpdate(1, info),
+        onPanEnd: (_) => _onPanEnd(1),
+      ),
+      DialerButton(
+        2,
+        buttonSize,
+        onPanStart: (_) => _onPanStart(2),
+        onPanUpdate: (info) => _onPanUpdate(2, info),
+        onPanEnd: (_) => _onPanEnd(2),
+      ),
+      DialerButton(
+        3,
+        buttonSize,
+        onPanStart: (_) => _onPanStart(3),
+        onPanUpdate: (info) => _onPanUpdate(3, info),
+        onPanEnd: (_) => _onPanEnd(3),
+      ),
+      DialerButton(
+        4,
+        buttonSize,
+        onPanStart: (_) => _onPanStart(4),
+        onPanUpdate: (info) => _onPanUpdate(4, info),
+        onPanEnd: (_) => _onPanEnd(4),
+      ),
+      DialerButton(
+        5,
+        buttonSize,
+        onPanStart: (_) => _onPanStart(5),
+        onPanUpdate: (info) => _onPanUpdate(5, info),
+        onPanEnd: (_) => _onPanEnd(5),
+      ),
+      DialerButton(
+        6,
+        buttonSize,
+        onPanStart: (_) => _onPanStart(6),
+        onPanUpdate: (info) => _onPanUpdate(6, info),
+        onPanEnd: (_) => _onPanEnd(6),
+      ),
+      DialerButton(
+        7,
+        buttonSize,
+        onPanStart: (_) => _onPanStart(7),
+        onPanUpdate: (info) => _onPanUpdate(7, info),
+        onPanEnd: (_) => _onPanEnd(7),
+      ),
+      DialerButton(
+        8,
+        buttonSize,
+        onPanStart: (_) => _onPanStart(8),
+        onPanUpdate: (info) => _onPanUpdate(8, info),
+        onPanEnd: (_) => _onPanEnd(8),
+      ),
+      DialerButton(
+        9,
+        buttonSize,
+        onPanStart: (_) => _onPanStart(9),
+        onPanUpdate: (info) => _onPanUpdate(9, info),
+        onPanEnd: (_) => _onPanEnd(9),
+      ),
+      DialerButton(
+        0,
+        buttonSize,
+        onPanStart: (_) => _onPanStart(0),
+        onPanUpdate: (info) => _onPanUpdate(0, info),
+        onPanEnd: (_) => _onPanEnd(0),
+      ),
+      const DialerStopper(buttonSize),
+    ];
   }
 
   void _fillCircleAlignments() {
@@ -97,6 +196,8 @@ class _DialerWidgetState extends State<DialerWidget> {
       },
     );
   }
+
+
 }
 
 class _OuterCircle extends StatelessWidget {
